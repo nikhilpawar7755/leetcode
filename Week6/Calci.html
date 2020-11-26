@@ -45,6 +45,7 @@
 
     <script type="text/javascript">
         let str;
+        let object = [];
         class Calculator {
             _num1 = null;
             _num2 = null;
@@ -96,14 +97,27 @@
                 return this.getNum1 ** this.getNum2;
             }
 
-            valueOfAngle = function (method,value) {
-                if (method === 'sin'){
+            valueOfAngle = function (method, value) {
+                if (method === 'sin') {
                     return Math.sin(value);
-                }else if (method === 'cos'){
+                } else if (method === 'cos') {
                     return Math.cos(value);
-                }else {
+                } else {
                     return Math.tan(value);
                 }
+            }
+        }
+
+        function backSpace(){
+            let currentValue = document.getElementById("calc-disply-value").value;
+            document.getElementById("calc-disply-value").value =  currentValue.substring(0, currentValue.length - 1);
+        }
+
+        function undo() {
+            if (object.length !== 0){
+            document.getElementById("calc-disply-value").value = object.pop();
+            }else {
+                alert(`There's is no operation to undo`)
             }
         }
 
@@ -152,10 +166,24 @@
                     tempNumber = 3.14;
                     i++;
                     continue;
-                } else if (str === ''){
-
+                } else if (str.substring(i, i + 3) === 'sin' || str.substring(i, i + 3) === 'cos' || str.substring(i, i + 3) === 'tan') {
+                    let method = str.substring(i, i + 3);
+                    i = i + 4;
+                    let temp = '';
+                    while (str[i] != ')') {
+                        temp = temp + str[i];
+                        i++;
+                    }
+                    //   console.log(tempNumber)
+                    tempNumber = parseFloat(temp);
+                    tempNumber = scientificCalculator1.valueOfAngle(method, tempNumber);
+                    if (flag === 1){
+                        number2 = tempNumber;
+                    }else {
+                        number1 = tempNumber;
+                    }
                 }
-                else {
+                else if (str[i] !== '(' && str[i] !== ')') {
                     operator = str[i];
                     if (flag === 1) {
                         number2 = tempNumber;
@@ -198,6 +226,11 @@
                     break;
                 case "/":
                     var result = calculator.divideNumbers();
+                    if (result === Infinity) {
+                        alert('CanNot divide by 0');
+                        document.getElementById("calc-disply-value").value = '';
+                        break;
+                    }
                     document.getElementById("calc-disply-value").value = result;
                     break;
                 case "**":
@@ -205,6 +238,14 @@
                     document.getElementById("calc-disply-value").value = result;
                     break;
             }
+            if (number1 && !number2){
+            document.getElementById("calc-disply-value").value = number1;
+            }
+            if (object.length === 10){
+                object.pop();
+                object.push(str);
+            }
+            object.push(str);
             // computationMap.clear();
             // computationMap.get("tempNumber") ?? computationMap.set("tempNumber", result);
         }
@@ -248,6 +289,12 @@
             <td><input type="button" value="sin" onclick="showValueOrOperation('sin(')" /> </td>
             <td><input type="button" value="cos" onclick="showValueOrOperation('cos(')" /> </td>
             <td><input type="button" value="tan" onclick="showValueOrOperation('tan(')" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="(" onclick="showValueOrOperation('(')" /> </td>
+            <td><input type="button" value=")" onclick="showValueOrOperation(')')" /> </td>
+            <td><input type="button" value="<--" onclick="backSpace()" /> </td>
+            <td><input type="button" value="undo" onclick="undo()" /> </td>
         </tr>
     </table>
     <div id="bitnami-banner" data-banner-id="3aba2">
