@@ -1,0 +1,349 @@
+<html>
+
+<head>
+
+    <style>
+        .title {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            width: 210px;
+            color: #ff4456;
+            border: solid black 1px;
+        }
+
+        input[type="button"] {
+            border-radius: 3px;
+            background-color: lightblue;
+            color: black;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        input[type="text"] {
+            text-align: right;
+            background-color: white;
+            width: 100%;
+            border: 1px solid black;
+            height: 100%;
+        }
+
+        td {
+            border: none;
+        }
+
+        tr {
+            border: none;
+        }
+
+        table {
+            width: 22%;
+            height: 200px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        let str;
+        let object = [];
+        class Calculator {
+            _num1 = null;
+            _num2 = null;
+            constructor(num1, num2) {
+                this._num1 = num1;
+                this._num2 = num2;
+            }
+            set setNum1(value) {
+                this._num1 = value;
+            }
+            set setNum2(value) {
+                this._num2 = value;
+            }
+            get getNum1() {
+                return this._num1;
+            }
+            get getNum2() {
+                return this._num2;
+            }
+            get getSum() {
+                return this.getNum1 + this.getNum2;
+            }
+            get getSub() {
+                return this.getNum1 - this.getNum2;
+            }
+            get getProduct() {
+                return this.getNum1 * this.getNum2;
+            }
+            get getQuotient() {
+                return this.getNum1 / this.getNum2;
+            }
+            addNumbers = function () {
+                return this.getSum;
+            }
+            subtractNumbers = function () {
+                return this.getSub;
+            }
+            multiplyNumbers = function () {
+                return this.getProduct;
+            }
+            divideNumbers = function () {
+                return this.getQuotient;
+            }
+
+        }
+
+        class ScientificCalculator extends Calculator {
+            powerOfNumber = function () {
+                return this.getNum1 ** this.getNum2;
+            }
+
+            valueOfAngle = function (method, value) {
+                if (method === 'sin') {
+                    return Math.sin(value);
+                } else if (method === 'cos') {
+                    return Math.cos(value);
+                } else {
+                    return Math.tan(value);
+                }
+            }
+        }
+
+        function backSpace(){
+            let currentValue = document.getElementById("calc-disply-value").value;
+            document.getElementById("calc-disply-value").value =  currentValue.substring(0, currentValue.length - 1);
+        }
+
+        function undo() {
+            if (object.length !== 0){
+            document.getElementById("calc-disply-value").value = object.pop();
+            }else {
+                alert(`There's is no operation to undo`)
+            }
+        }
+
+        function showValueOrOperation(value) {
+            try {
+                let currentValue = document.getElementById("calc-disply-value").value;
+                let displayValue = currentValue + value;
+                document.getElementById("calc-disply-value").value = displayValue;
+                str = displayValue;
+            }
+            catch (error) {
+                document.getElementById("calc-disply-value").value = "There's been an error";
+                console.log(error);
+            }
+            // finally {
+            //     let currentValue = document.getElementById("calc-disply-value").value;
+            //     let displayValue = currentValue + value;
+            //     document.getElementById("calc-disply-value").value = displayValue;
+            // }
+        }
+
+        function Calulate() {
+            // let number2 = parseFloat(computationMap.get("number2"));
+            // let operator = computationMap.get("operator");
+            // let tempNumber = parseFloat(computationMap.get("tempNumber"));
+            let tempNumber = 0;
+            let flag = 0;
+            let scientificCalculator1 = new ScientificCalculator();
+            let number2 = 0;
+            let operator, number1;
+            for (let i = 0; i < str.length; i++) {
+                if (!isNaN(parseInt(str[i])) && i >= '0' && i <= '9') {
+                    if (tempNumber === 0) {
+                        tempNumber = parseInt(str[i]);
+                    } else {
+                        tempNumber = tempNumber * 10 + parseInt(str[i]);
+                    }
+                } else if (str[i] === '.') {
+                    let temp = '';
+                    while (str[i + 1] >= '0' && str[i + 1] <= '9' && i < str.length - 1) {
+                        temp = temp + str[i + 1];
+                        i++;
+                    }
+                    tempNumber = parseFloat(`${tempNumber}.${temp}`);
+                } else if (str[i] == 'p' && str[i + 1] == 'i') {
+                    tempNumber = 3.14;
+                    i++;
+                    continue;
+                } else if (str.substring(i, i + 3) === 'sin' || str.substring(i, i + 3) === 'cos' || str.substring(i, i + 3) === 'tan') {
+                    let method = str.substring(i, i + 3);
+                    i = i + 4;
+                    let temp = '';
+                    while (str[i] != ')') {
+                        temp = temp + str[i];
+                        i++;
+                    }
+                    //   console.log(tempNumber)
+                    tempNumber = parseFloat(temp);
+                    tempNumber = scientificCalculator1.valueOfAngle(method, tempNumber);
+                    if (flag === 1){
+                        number2 = tempNumber;
+                    }else {
+                        number1 = tempNumber;
+                    }
+                }
+                else if (str[i] !== '(' && str[i] !== ')') {
+                    operator = str[i];
+                    if (flag === 1) {
+                        number2 = tempNumber;
+                    } else {
+                        number1 = tempNumber;
+                    }
+                    tempNumber = 0;
+                    flag = 1;
+                }
+            }
+            if (flag === 1 && number2 === 0) {
+                number2 = tempNumber;
+            }
+            let calculator = new Calculator(number1, number2);
+            let scientificCalculator = new ScientificCalculator(number1, number2);
+            switch (operator) {
+                case "+":
+                    document.getElementById("calc-disply-value").value = "calculating...";
+                    let promise = new Promise(
+                        function (resolve, reject) {
+                            setTimeout(
+                                () => {
+                                    var result = calculator.addNumbers();
+                                    resolve(result);
+                                }, 1000);
+                        }).then(
+                            function (result) {
+                                // computationMap.get("tempNumber") ?? computationMap.set("tempNumber", result);
+                                document.getElementById("calc-disply-value").value = result;
+                            }
+                        );
+                    break;
+                case "-":
+                    var result = calculator.subtractNumbers();
+                    document.getElementById("calc-disply-value").value = result;
+                    break;
+                case "*":
+                    var result = calculator.multiplyNumbers();
+                    document.getElementById("calc-disply-value").value = result;
+                    break;
+                case "/":
+                    var result = calculator.divideNumbers();
+                    if (result === Infinity) {
+                        alert('CanNot divide by 0');
+                        document.getElementById("calc-disply-value").value = '';
+                        break;
+                    }
+                    document.getElementById("calc-disply-value").value = result;
+                    break;
+                case "**":
+                    var result = scientificCalculator.powerOfNumber();
+                    document.getElementById("calc-disply-value").value = result;
+                    break;
+            }
+            if (number1 && !number2){
+            document.getElementById("calc-disply-value").value = number1;
+            }
+            if (object.length === 10){
+                object.pop();
+                object.push(str);
+            }
+            object.push(str);
+            // computationMap.clear();
+            // computationMap.get("tempNumber") ?? computationMap.set("tempNumber", result);
+        }
+    </script>
+
+</head>
+
+
+<body>
+    <table border="1">
+        <tr>
+            <td style="width:55px"><input type="button" value="**" onclick="showValueOrOperation('**')" /> </td>
+            <td colspan="3"><input type="text" id="calc-disply-value" /></td>
+        </tr>
+        <tr>
+            <td><input type="button" value="+" onclick="showValueOrOperation('+')" /> </td>
+            <td><input type="button" value="1" onclick="showValueOrOperation('1')" /> </td>
+            <td><input type="button" value="2" onclick="showValueOrOperation('2')" /> </td>
+            <td><input type="button" value="3" onclick="showValueOrOperation('3')" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="-" onclick="showValueOrOperation('-')" /> </td>
+            <td><input type="button" value="4" onclick="showValueOrOperation('4')" /> </td>
+            <td><input type="button" value="5" onclick="showValueOrOperation('5')" /> </td>
+            <td><input type="button" value="6" onclick="showValueOrOperation('6')" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="*" onclick="showValueOrOperation('*')" /> </td>
+            <td><input type="button" value="7" onclick="showValueOrOperation('7')" /> </td>
+            <td><input type="button" value="8" onclick="showValueOrOperation('8')" /> </td>
+            <td><input type="button" value="9" onclick="showValueOrOperation('9')" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="/" onclick="showValueOrOperation('/')" /> </td>
+            <td><input type="button" value="." onclick="showValueOrOperation('.')" /> </td>
+            <td><input type="button" value="0" onclick="showValueOrOperation('0')" /> </td>
+            <td><input type="button" value="=" onclick="Calulate()" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="pi" onclick="showValueOrOperation('pi')" /> </td>
+            <td><input type="button" value="sin" onclick="showValueOrOperation('sin(')" /> </td>
+            <td><input type="button" value="cos" onclick="showValueOrOperation('cos(')" /> </td>
+            <td><input type="button" value="tan" onclick="showValueOrOperation('tan(')" /> </td>
+        </tr>
+        <tr>
+            <td><input type="button" value="(" onclick="showValueOrOperation('(')" /> </td>
+            <td><input type="button" value=")" onclick="showValueOrOperation(')')" /> </td>
+            <td><input type="button" value="<--" onclick="backSpace()" /> </td>
+            <td><input type="button" value="undo" onclick="undo()" /> </td>
+        </tr>
+    </table>
+    <div id="bitnami-banner" data-banner-id="3aba2">
+        <style>
+            #bitnami-banner {
+                z-index: 100000;
+                height: 80px;
+                padding: 0px;
+                width: 120px;
+                background: transparent;
+                position: fixed;
+                right: 0px;
+                bottom: 0px;
+                border: 0px solid #EDEDED;
+            }
+
+            #bitnami-banner .bitnami-corner-image-div {
+                position: fixed;
+                right: 0px;
+                bottom: 0px;
+                border: 0px;
+                z-index: 100001;
+                height: 110px;
+            }
+
+            #bitnami-banner .bitnami-corner-image-div .bitnami-corner-image {
+                position: fixed;
+                right: 0px;
+                bottom: 0px;
+                border: 0px;
+                z-index: 100001;
+                height: 110px;
+            }
+
+            #bitnami-close-banner-button {
+                height: 12px;
+                width: 12px;
+                z-index: 10000000000;
+                position: fixed;
+                right: 5px;
+                bottom: 65px;
+                display: none;
+                cursor: pointer
+            }
+        </style> <img id="bitnami-close-banner-button" src="/bitnami/images/close.png" />
+        <div class="bitnami-corner-image-div"> <a href="/bitnami/index.html" target="_blank"> <img
+                    class="bitnami-corner-image" alt="Bitnami" src="/bitnami/images/corner-logo.png" /> </a> </div>
+        <script type="text/javascript" src="/bitnami/banner.js"> </script>
+    </div>
+</body>
+
+</html>
