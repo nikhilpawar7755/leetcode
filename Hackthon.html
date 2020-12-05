@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Cool Veggies</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+
+    </script>
+    <style>
+        #filecontent {
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+    <script>
+        // D6Lw1j3hL2KTGSxV
+        async function spellCheck() {
+            let text = filecontent.value;
+            let url = "https://api.textgears.com/spelling?key=D6Lw1j3hL2KTGSxV&text=" + text + "!&language=en-GB";
+            let response =  await fetch(url);
+            let res;
+            if (response.ok) {
+                console.log(response)
+                res = response.clone().json();
+                console.log(res);
+                let stri= JSON.stringify(res);
+                console.log('Hello'+stri);
+                console.log('Helo'+res.json());
+            }
+        }
+        async function ReadFile(files) {
+            try {
+                if (inputfile.files[0].type === "text/plain") {
+                    let file = inputfile.files[0];
+                    let reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = async function () {
+                        filecontent.value = reader.result;
+                        await spellCheck();
+                    }
+                } else {
+                    alert('File Type is wrong')
+                    throw new Error('File type is wrong');
+                }
+            } catch (Error) {
+
+            }
+        }	
+    </script>
+</head>
+
+<body style="align-content: center;
+display: grid;
+margin: 160px;">
+    <input type="file" name="inputfile" id="inputfile" onchange="ReadFile()"> <br />
+    <textarea id="filecontent"></textarea>
+</body>
+
+</html>
