@@ -16,10 +16,20 @@
             width: 600px;
             height: 600px;
         }
+
+        #list p {
+            font: arial;
+            font-size: 14px;
+            background-color: yellow;
+        }
+        span {
+            color: red;
+        }
     </style>
     <script>
         // D6Lw1j3hL2KTGSxV
         let object1 = {};
+        let uniqValue = new Set();
         async function spellCheck() {
             let text = filecontent.value;
             let url = "https://api.textgears.com/spelling?key=D6Lw1j3hL2KTGSxV&text=" + text + "!&language=en-GB";
@@ -28,12 +38,22 @@
                     return res.json();
                 })
                 .then((data) => {
+                    let object2 = {};
                     console.log(data)
                     for (const error of data.response.errors) {
+                        object2 = {};
                         console.log('Error: %s. Suggestions: %s', error.bad, error.better.join(', '));
-                        object1[error.bad] = error.better;
+                        object2[error.bad] = error.better;
+                        text = text.replace(error.bad,`<span style = "color:red">${error.bad}</span>`)
+                        var myFrame = $("#Name").contents().find('body');
+                        myFrame.html(text);
+                        uniqValue.add(object2);
                     }
-                    console.log(object1)
+                    console.log(uniqValue);
+                    // $('textarea').highlightTextarea({
+                    //     words: Object.keys(object1)
+                    // });
+
                     return data;
                 })
         }
@@ -45,6 +65,8 @@
                     reader.readAsText(file);
                     reader.onload = async function () {
                         filecontent.value = reader.result;
+                        var myFrame = $("#Name").contents().find('body');
+                        myFrame.html(reader.result);
                         await spellCheck();
                     }
                 } else {
@@ -63,6 +85,13 @@ display: grid;
 margin: 160px;">
     <input type="file" name="inputfile" id="inputfile" onchange="ReadFile()"> <br />
     <textarea id="filecontent"></textarea>
+
+    <p>&nbsp;</p>
+    <p>README.txt</p>
+    <p>&nbsp;</p>
+    <div id="list">
+        <p><iframe id='Name' frameborder="0" height="400" width="95%"></iframe></p>
+    </div>
 </body>
 
 </html>
