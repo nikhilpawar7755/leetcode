@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Cool Veggies</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+
+  </script>
+  <style>
+    /* Remove the navbar's default rounded borders and increase the bottom margin */
+    .navbar {
+      margin-bottom: 50px;
+      border-radius: 0;
+    }
+
+    /* Remove the jumbotron's default bottom margin */
+    .jumbotron {
+      margin-bottom: 0;
+    }
+
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+
+    .show-error {
+      border: 3px solid red;
+    }
+
+    #myInput {
+      margin-top: 12px;
+    }
+
+    /* .div_hover {
+      background-color: #FFFFFF;
+    } */
+
+    .col-sm-4:hover {
+      background-color:lightblue;
+    }
+
+    .dropbtn {
+      background-color: #3498DB;
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dropbtn:hover,
+    .dropbtn:focus {
+      background-color: #2980B9;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      overflow: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown a:hover {
+      background-color: #ddd;
+    }
+
+    .show {
+      display: block;
+    }
+  </style>
+  <script>
+    let timerObject = {};
+    let searcedWords = [];
+    let start = 0;
+    function ValidateClearWarning() {
+      let form = document.forms.signIn;
+      form.elements.email.value = "";
+      form.elements.email.classList.remove("show-error");
+    }
+    function Validate() {
+      let form = document.forms.signIn;
+      if (form.elements.email.value.indexOf("@") == -1) {
+        form.elements.email.value = "";
+        form.elements.email.setAttribute("placeholder", "Email invalid");
+        form.elements.email.classList.add("show-error");
+      }
+    }
+    function myFunction(event) {
+      var table, tr, td, i, txtValue;
+      let input = document.getElementById("myInput");
+      if (event.key === 'Enter') {
+        searcedWords.push(input.value);
+      }
+      let filter = input.value.toLowerCase();
+      let divs = document.getElementsByClassName('col-sm-4')
+      for (i = 0; i < divs.length; i++) {
+        headingDiv = divs[i].getElementsByClassName("panel-heading")[0];
+        if (headingDiv) {
+          txtValue = headingDiv.textContent || headingDiv.innerText;
+          if (txtValue.toLowerCase().startsWith(filter)) {
+            divs[i].style.display = "";
+          } else {
+            divs[i].style.display = "none";
+          }
+        }
+      }
+    }
+
+    function toggleDropdown() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function showSelectedVeggies(event) {
+      console.log(timerObject)
+      let divs = document.getElementsByClassName('col-sm-4')
+      for (i = 0; i < divs.length; i++) {
+        headingDiv = divs[i].getElementsByClassName("panel-heading")[0];
+        if (headingDiv) {
+          if (headingDiv.getAttribute('type') === event.currentTarget.innerText) {
+            divs[i].style.display = "";
+          } else {
+            divs[i].style.display = "none";
+          }
+        }
+      }
+    }
+
+    function mouseover(event) {
+      let Name = event.currentTarget.firstElementChild.firstElementChild.innerText;
+      if (timerObject.Name === undefined) {
+        start = 0;
+      } else {
+        start = timerObject[Name];
+      }
+      setInterval(function () {
+        start++;
+        var count = start;
+      }, 1000);
+    }
+
+    function mouseout(event) {
+      let Name = event.currentTarget.firstElementChild.firstElementChild.innerText;
+      if (timerObject.Name === undefined) {
+        timerObject[Name] = start;
+      } else {
+        timerObject[Name] = timerObject[Name] + start;
+      }
+
+    }
+
+    window.onclick = function (event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"></a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#"> <strong> Best Veggies </strong> </a></li>
+          <li><a href="cart.html">Products</a></li>
+          <li><a href="#">Deals</a></li>
+          <li><a href="#">Stores</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <input class="active" type="text" onkeyup="myFunction(event)" id="myInput" placeholder="Search for names.."
+          title="Type in a name">
+        <div class="dropdown">
+          <button onclick="toggleDropdown()" class="dropbtn">Dropdown</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="#" value='Vegetables' onclick="showSelectedVeggies(event)">Vegetables</a>
+            <a href="#" value='Fruits' onclick="showSelectedVeggies(event)">Fruits</a>
+          </div>
+        </div>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div id="tomatoDiv" class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary ">
+          <div class="panel-heading" type='Vegetables'>Tomatoes </div>
+          <div class="panel-body"><img src="cart Images/tomato.jpg" class="img-responsive"
+              style="width:100%; height: 250px;" alt="Image"></div>
+          <div class="panel-footer">
+            <button id="tomatoButton" type="button" class="btn btn-primary">Buy
+              Tomato's</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary">
+          <div class="panel-heading" type='Vegetables'>Cucumber</div>
+          <div class="panel-body"><img src="cart Images/cucumber.jpg" class="img-responsive"
+              style="width:100%;  height: 250px;" alt="Image"></div>
+          <div class="panel-footer">Buy Cucumber's</div>
+        </div>
+      </div>
+      <div class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary">
+          <div class="panel-heading" type='Vegetables'>Chilli's</div>
+          <div class="panel-body"><img src="cart Images/chilli.jpg" class="img-responsive"
+              style="width:100%; height: 250px" alt="Image"></div>
+          <div class="panel-footer">Buy Chilli's</div>
+        </div>
+      </div>
+    </div>
+  </div><br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary ">
+          <div class="panel-heading" type='Fruits'>Strawberry's </div>
+          <div class="panel-body"><img id="strawberyImg" src="cart Images/strawbery.jpg" class="img-responsive"
+              style="width:100%; height: 250px;" alt="Image"></div>
+          <div class="panel-footer">Buy Tomato's</div>
+        </div>
+      </div>
+      <div class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary">
+          <div class="panel-heading" type='Fruits'>Mango's</div>
+          <div class="panel-body"><img src="cart Images/mango.jpg" class="img-responsive"
+              style="width:100%;  height: 250px;" alt="Image"></div>
+          <div class="panel-footer">Buy Cucumber's</div>
+        </div>
+      </div>
+      <div class="col-sm-4" onmouseover="mouseover(event)" onmouseout="mouseout(event)">
+        <div class="panel panel-primary">
+          <div class="panel-heading" type='Fruits'>Pineapple's</div>
+          <div class="panel-body"><img src="cart Images/pineapple.jpg" class="img-responsive"
+              style="width:100%; height: 250px" alt="Image"></div>
+          <div class="panel-footer">Buy Chilli's</div>
+        </div>
+      </div>
+    </div>
+  </div><br><br>
+
+  <footer class="container-fluid text-center">
+    <button id="Cart" type="button" class="btn btn-primary" onclick="location.href = 'cart.html';">Add Items to
+      Cart</button>
+    <p>Online Store Copyright</p>
+    <form class="form-inline" name="signIn">Get deals:
+      <input type="email" name="email" class="form-control" size="50" placeholder="Email Address"
+        onfocus="ValidateClearWarning();">
+      <button type="button" class="btn btn-danger" onclick="Validate();">Sign Up</button>
+    </form>
+  </footer>
+
+</body>
+
+</html>
