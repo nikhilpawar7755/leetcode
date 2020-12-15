@@ -20,18 +20,31 @@
         #list p {
             font: arial;
             font-size: 14px;
-            background-color: yellow;
+            background-color: lightblue
         }
+
         span {
-            color: red;
+            background-color: red;
         }
     </style>
     <script>
         // D6Lw1j3hL2KTGSxV
         let object1 = {};
+        let fileContent;
         let uniqValue = new Set();
+        async function addOnClickOnSpan() {
+            let iframeObject = document.getElementById("Name");
+            let bodyObject = iframeObject.contentDocument.body;
+            let AllSpanObject = Array.from(bodyObject.getElementsByTagName('span'));
+            AllSpanObject.forEach((e) => {
+                e.style = "background-color:red"
+                e.onclick = function () {
+                    alert('Hello')
+                }
+            })
+        }
         async function spellCheck() {
-            let text = filecontent.value;
+            let text = filecontent;
             let url = "https://api.textgears.com/spelling?key=D6Lw1j3hL2KTGSxV&text=" + text + "!&language=en-GB";
             await fetch(url)
                 .then((res) => {
@@ -39,32 +52,31 @@
                 })
                 .then((data) => {
                     let object2 = {};
-                    console.log(data)
                     for (const error of data.response.errors) {
                         object2 = {};
                         console.log('Error: %s. Suggestions: %s', error.bad, error.better.join(', '));
                         object2[error.bad] = error.better;
-                        text = text.replace(error.bad,`<span style = "color:red">${error.bad}</span>`)
+                        text = text.replace(error.bad, `<span style = "color:red">${error.bad}</span>`)
                         var myFrame = $("#Name").contents().find('body');
                         myFrame.html(text);
                         uniqValue.add(object2);
+                        addOnClickOnSpan();
                     }
-                    console.log(uniqValue);
-                    // $('textarea').highlightTextarea({
-                    //     words: Object.keys(object1)
-                    // });
-
                     return data;
                 })
         }
         async function ReadFile(files) {
             try {
+                var frameElement = document.getElementById("Name");
+                var doc = frameElement.contentDocument;
+                doc.body.contentEditable = true;
+                // To make iframe editable.
                 if (inputfile.files[0].type === "text/plain") {
                     let file = inputfile.files[0];
                     let reader = new FileReader();
                     reader.readAsText(file);
                     reader.onload = async function () {
-                        filecontent.value = reader.result;
+                        filecontent = reader.result;
                         var myFrame = $("#Name").contents().find('body');
                         myFrame.html(reader.result);
                         await spellCheck();
@@ -76,19 +88,27 @@
             } catch (Error) {
 
             }
-        }	
+        }
+
+        document.getElementById("Name").contentDocument.document.body.onclick = function () {
+            alert("iframe clicked");
+        }
+        // $("span").click(function () {
+        //     alert('Hello');
+        // })
     </script>
 </head>
 
 <body style="align-content: center;
 display: grid;
 margin: 160px;">
+
     <input type="file" name="inputfile" id="inputfile" onchange="ReadFile()"> <br />
-    <textarea id="filecontent"></textarea>
+    <!-- <textarea id="filecontent"></textarea>
 
     <p>&nbsp;</p>
     <p>README.txt</p>
-    <p>&nbsp;</p>
+    <p>&nbsp;</p> -->
     <div id="list">
         <p><iframe id='Name' frameborder="0" height="400" width="95%"></iframe></p>
     </div>
