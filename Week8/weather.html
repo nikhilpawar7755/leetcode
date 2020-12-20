@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Weather App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        async function showTemp(Unit) {
+            let url = "https://api.weatherapi.com/v1/current.json?key=58bcc871bcb2487ebd471834202012&q=London";
+            await fetch(url)
+                .then((res) => {
+                    return res.json();
+                })
+                .then((data) => {
+                    if (Unit === 'C'){
+                        document.getElementById('CSpan').innerText = data.current.feelslike_c;
+                    }else if (Unit === 'F'){
+                        document.getElementById('FSpan').innerText = data.current.feelslike_f;
+                    }
+                    console.log(data.current.feelslike_c,data.current.feelslike_f)
+                    return data;
+                })
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <button onclick="showTemp('C')">ShowTemperature in Celsius</button>
+        <span id ='CSpan'></span>
+    </div>
+    <br>
+    <div>
+        <button onclick="showTemp('F')">ShowTemperature in farade</button>
+        <span id ='FSpan'></span>
+    </div>
+    </body>
+
+</html>
